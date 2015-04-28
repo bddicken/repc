@@ -47,6 +47,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 
                 reader.onload = function(e) {
                     var tree = JSON.parse(reader.result);
+                    cleanAfterSave(tree);
+                    initTree(tree);
                     initTree(tree);
                 }
 
@@ -98,6 +100,11 @@ var sidebar = d3.select("#side-bar")
       .style("display", "inline-block");
 
 var initTree = function(relations) {
+  
+  // clear old tree
+  var node = svg.selectAll("g.node").remove();
+  var link = svg.selectAll("path.link").remove();
+
   root = relations;
   root.x0 = height / 2;
   root.y0 = 0;
@@ -151,8 +158,8 @@ function cleanBeforeSave(d) {
   }
   
   if(d.children == null) {
-    d.children = d._children;
     d.childrenReplace = "replace";
+    d.children = d._children;
   }
     
   delete d._children;
@@ -175,6 +182,7 @@ function update(source) {
   nodes.forEach(function(d) { d.y = d.depth * 180; });
 
   // Update the nodes…
+
   var node = svg.selectAll("g.node")
       .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
@@ -205,7 +213,7 @@ function update(source) {
       .style("opacity", 0.7)
       .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
       .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { updateTree(d,"pos"); })
+      .on("click", function(d) { console.log("pos"); updateTree(d,"pos"); })
 
   nodeEnter.append("rect")
       .attr("class", "yellow")
@@ -217,7 +225,7 @@ function update(source) {
       .style("opacity", 0.7)
       .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
       .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { updateTree(d,"unk"); })
+      .on("click", function(d) { console.log("unk"); updateTree(d,"unk"); })
 
   nodeEnter.append("rect")
       .attr("class", "red")
@@ -229,7 +237,7 @@ function update(source) {
       .style("opacity", 0.7)
       .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
       .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { updateTree(d,"neg"); })
+      .on("click", function(d) { console.log("neg"); updateTree(d,"neg"); })
 
   nodeEnter.append("text")
       .attr("x", function(d) { return 75; })
