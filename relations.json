@@ -1,0 +1,54 @@
+{
+ "name": "PER", "type": "pos", "size": 16,
+ "children": 
+ [
+  {
+   "name": "works", "type": "unk", "size":5,
+   "children": 
+   [
+    {
+     "name": "for", "type": "pos", "size":2,
+     "children": [
+      {"name": "company", "type": "pos", "size": 1},
+      {"name": "school", "type": "pos", "size": 1}
+     ]
+    },
+    {
+     "name": "at", "type": "pos", "size":2,
+     "children": [
+      {"name": "company", "type": "unk", "size": 1},
+      {"name": "school", "type": "pos", "size": 1},
+      {"name": "hotel", "type": "pos", "size": 1}
+     ]
+    }
+   ]
+  },
+  {
+   "name": "travels", "type": "pos", "size":11,
+   "children": 
+   [
+    {
+     "name": "for", "type": "neg",  "size":2,
+     "children": [
+      {"name": "company", "type": "neg", "size": 1},
+      {"name": "school", "type": "pos", "size": 1}
+     ]
+    },
+    {
+     "name": "at", "type": "neg",  "size":9,
+     "children": [
+      {"name": "company", "type": "neg", "size": 1},
+      {"name": "school", "type": "pos", "size": 1},
+      {"name": "corp", "type": "pos", "size": 1},
+      {"name": "co", "type": "pos", "size": 1},
+      {"name": "center", "type": "pos", "size": 1},
+      {"name": "centre", "type": "pos", "size": 1},
+      {"name": "place", "type": "pos", "size": 1},
+      {"name": "building", "type": "pos", "size": 1},
+      {"name": "shoppe", "type": "pos", "size": 1}
+     ]
+    }
+   ]
+  }
+ ]
+}

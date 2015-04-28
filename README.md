@@ -1,1 +1,1 @@
-# repc
+# REPC - Relation Extraction Path Cleaner
