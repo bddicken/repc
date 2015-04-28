@@ -121,7 +121,7 @@ var initTree = function(relations) {
   update(root);
 }
 
-d3.json("./relations.json", function(error, relations) {
+d3.json("./resource/relations.json", function(error, relations) {
   initTree(relations);
 });
 
