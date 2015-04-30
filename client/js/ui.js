@@ -14,7 +14,7 @@
         if(!filename) filename = 'console.json'
 
         if(typeof data === "object"){
-            data = JSON.stringify(data, undefined, 4)
+            data = JSON.stringify(data, undefined, 1);
         }
 
         var blob = new Blob([data], {type: 'text/json'}),
@@ -174,17 +174,33 @@ d3.select(self.frameElement).style("height", "800px");
 
 function update(source) {
 
+    var labelScale = d3.scale.linear()
+        .domain([0, root.size])
+        .range([12, 50]);
+
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 180; });
+  nodes.forEach(function(d) { d.y = d.depth * 280; });
 
   // Update the nodes…
 
+  var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "" + 
+            "<strong>Path:</strong> <span style='color:red'>" + getAncestorPath(d) + "</span>" +
+            "</br>" +
+            "<strong>Path Length:</strong> <span style='color:red'>" + getAncestorPathLength(d) + "</span>";
+      });
+
+  svg.call(tip);
+
   var node = svg.selectAll("g.node")
-      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+  .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
   // Enter any new nodes at the parent's previous position.
   var nodeEnter = node.enter().append("g")
@@ -201,7 +217,9 @@ function update(source) {
             else if (d.type == "neg") { return "LightCoral"; }
             return "black";
       })
-      .on("click", click);
+      .on("click", click)
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
   
   nodeEnter.append("rect")
       .attr("class", "green")
@@ -242,10 +260,21 @@ function update(source) {
   nodeEnter.append("text")
       .attr("x", function(d) { return 75; })
       .attr("dy", ".35em")
-      .attr("font-size", function(d) { return Math.ceil(Math.log(d.size+1))*15 + "px"; })
+      .attr("font-size", function(d) { 
+        //return Math.ceil(Math.log(d.size+1))*15 + "px"; 
+        return labelScale(d.size) + "px";
+      })
       .attr("text-anchor", function(d) { return "start"; })
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
+  
+  nodeEnter.append("text")
+      .attr("x", function(d) { return -(13+((d.size + "").length *7)); })
+      .attr("y", function(d) { return -3; })
+      .attr("dy", ".55em")
+      .attr("font-size", "12px")
+      .attr("text-anchor", "start")
+      .text(function(d) { return d.size; });
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
@@ -325,6 +354,18 @@ function click(d) {
     d._children = null;
   }
   update(d);
+}
+
+// 
+function getAncestorPathLength(d) {
+  if(d.parent) { return getAncestorPathLength(d.parent) + 1; }
+  return 1;
+}
+
+// 
+function getAncestorPath(d) {
+  if(d.parent) { return getAncestorPath(d.parent) + " " + d.name; }
+  return d.name;
 }
 
 // Update children type on click.
