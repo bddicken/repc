@@ -62,15 +62,15 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
     alert('The File APIs are not fully supported in this browser.');
 }
 
-
-var margin = {top: 20, right: 20, bottom: 100, left: 20},
-    width = 1000 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom,
-    side = 250;
+var bar = 70;
+var side = 250;
+var margin = {top: 20, right: 20, bottom: 30, left: 60};
+var width =  $( window ).width();
+var height =  $( window ).height() - bar - margin.top - margin.bottom;
     
 var i = 0,
     duration = 750,
-    root;
+    tree_roots;
 
 var tree = d3.layout.tree()
     .size([height, width]);
@@ -105,9 +105,10 @@ var initTree = function(relations) {
   var node = svg.selectAll("g.node").remove();
   var link = svg.selectAll("path.link").remove();
 
-  root = relations;
-  root.x0 = height / 2;
-  root.y0 = 0;
+  tree_roots = [];
+  tree_roots.push(relations);
+  tree_roots[0].x0 = height / 2;
+  tree_roots[0].y0 = 0;
 
   function collapse(d) {
     if (d.children) {
@@ -117,8 +118,8 @@ var initTree = function(relations) {
     }
   }
 
-  root.children.forEach(collapse);
-  update(root);
+  tree_roots[0].children.forEach(collapse);
+  update(tree_roots[0]);
 }
 
 d3.json("./resource/relations.json", function(error, relations) {
@@ -126,10 +127,10 @@ d3.json("./resource/relations.json", function(error, relations) {
 });
 
 d3.select("#export").on("click", function() { 
-    cleanBeforeSave(root);
-    console.save(root, "rel.json"); 
-    cleanAfterSave(root);
-    update(root);
+    cleanBeforeSave(tree_roots[tree_roots.length-1]);
+    console.save(tree_roots[tree_roots.length-1], "rel.json"); 
+    cleanAfterSave(tree_roots[tree_roots.length-1]);
+    update(tree_roots[tree_roots.length-1]);
 });
 
 function cleanAfterSave(d) {
@@ -173,13 +174,17 @@ function cleanBeforeSave(d) {
 d3.select(self.frameElement).style("height", "800px");
 
 function update(source) {
-
-    var labelScale = d3.scale.linear()
-        .domain([0, root.size])
-        .range([12, 50]);
+    
+    d3.select("#tree-vis")
+      .attr("width", $( window ).width() - side)
+      .attr("height", $( window ).height() - 90)
+  
+  var labelScale = d3.scale.linear()
+      .domain([0, tree_roots[tree_roots.length-1].size])
+      .range([12, 50]);
 
   // Compute the new tree layout.
-  var nodes = tree.nodes(root).reverse(),
+  var nodes = tree.nodes(tree_roots[tree_roots.length-1]).reverse(),
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
@@ -205,8 +210,17 @@ function update(source) {
   // Enter any new nodes at the parent's previous position.
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-      //.on("click", click);
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; });
+  
+  nodeEnter.append("circle")
+      .attr("class", "node-root-select")
+      .attr("r", 4)
+      .attr("x", 15)
+      .attr("y", -9)
+      .style("fill", function(d) { 
+            return "black";
+      })
+      .on("click", rootUpdate);
 
   nodeEnter.append("circle")
       .attr("class", "node-handle")
@@ -269,7 +283,7 @@ function update(source) {
       .style("fill-opacity", 1e-6);
   
   nodeEnter.append("text")
-      .attr("x", function(d) { return -(13+((d.size + "").length *7)); })
+      .attr("x", function(d) { return -(26+((d.size + "").length *6)); })
       .attr("y", function(d) { return -3; })
       .attr("dy", ".55em")
       .attr("font-size", "12px")
@@ -280,6 +294,12 @@ function update(source) {
   var nodeUpdate = node.transition()
       .duration(duration)
       .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+  
+  nodeUpdate.select(".node-root-select")
+      .attr("r", 4)
+      .attr("cx", -16)
+      .attr("cy", 0)
+      .style("fill", function(d) { return"black";})
 
   nodeUpdate.select(".node-handle")
       .attr("r", 9)
@@ -344,6 +364,22 @@ function update(source) {
   });
 }
 
+//
+function rootUpdate(d) {
+  var top_root = tree_roots[tree_roots.length-1];
+  if (d == top_root) {
+      if (tree_roots.length > 1) {
+          tree_roots.pop();
+      } else {
+          alert("already at root!");
+      }
+  } else {
+      tree_roots.push(d);
+  }
+  update(tree_roots[tree_roots.length-1]);
+}
+
+
 // Toggle children on click.
 function click(d) {
   if (d.children) {
@@ -356,15 +392,15 @@ function click(d) {
   update(d);
 }
 
-// 
+// Get ancestor path length
 function getAncestorPathLength(d) {
   if(d.parent) { return getAncestorPathLength(d.parent) + 1; }
   return 1;
 }
 
-// 
+// Gat ancestor path
 function getAncestorPath(d) {
-  if(d.parent) { return getAncestorPath(d.parent) + " " + d.name; }
+  if(d.parent) { return getAncestorPath(d.parent) + " ~ " + d.name; }
   return d.name;
 }
 
@@ -381,10 +417,14 @@ function updateTree(d, type) {
 }
 
 $( window ).resize(function() {
-    d3.select("#tree-vis")
-      .attr("width", function(d) { return $( window ).width() - side; })
-      .attr("height", function(d) { return $( window ).height() - 90; });
-    d3.select("#side-bar")
-      .style("height", function(d) { return ($( window ).height() - 90) + "px"; });
+  width = $( window ).width() - side;
+  height = $( window ).height() - bar - margin.top - margin.bottom;
+  tree.size([height, width]);
+  d3.select("#tree-vis")
+    .attr("width", width )
+    .attr("height", height );
+  d3.select("#side-bar")
+    .style("height", function(d) { return ($( window ).height() - 90) + "px"; });
+  update(tree_roots[tree_roots.length-1]);
 });
 
