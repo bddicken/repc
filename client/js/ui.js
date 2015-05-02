@@ -211,16 +211,6 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; });
-  
-  nodeEnter.append("circle")
-      .attr("class", "node-root-select")
-      .attr("r", 4)
-      .attr("x", 15)
-      .attr("y", -9)
-      .style("fill", function(d) { 
-            return "black";
-      })
-      .on("click", rootUpdate);
 
   nodeEnter.append("circle")
       .attr("class", "node-handle")
@@ -280,10 +270,11 @@ function update(source) {
       })
       .attr("text-anchor", function(d) { return "start"; })
       .text(function(d) { return d.name; })
-      .style("fill-opacity", 1e-6);
+      .style("fill-opacity", 1e-6)
+      .on("click", rootUpdate);
   
   nodeEnter.append("text")
-      .attr("x", function(d) { return -(26+((d.size + "").length *6)); })
+      .attr("x", function(d) { return -(16+((d.size + "").length *6)); })
       .attr("y", function(d) { return -3; })
       .attr("dy", ".55em")
       .attr("font-size", "12px")
@@ -294,12 +285,6 @@ function update(source) {
   var nodeUpdate = node.transition()
       .duration(duration)
       .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-  
-  nodeUpdate.select(".node-root-select")
-      .attr("r", 4)
-      .attr("cx", -16)
-      .attr("cy", 0)
-      .style("fill", function(d) { return"black";})
 
   nodeUpdate.select(".node-handle")
       .attr("r", 9)
