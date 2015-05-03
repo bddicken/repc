@@ -6,12 +6,14 @@
   
   <link rel="stylesheet" type="text/css" href="./style/style.css">
 
+  <!-- JQuery -->
   <script src="./js/jquery-1.8.3.min.js"></script>
 
   <!-- JQuery UI -->
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-  
+ 
+  <!-- D3 -->
   <script src="./js/d3.v3.js"></script>
   <script src="./js/d3.tip.js"></script>
 
@@ -21,17 +23,21 @@
 
 <div id="title-bar">
 
-<span id="title">Relation Extraction Path Cleaner</span>
+<span id="title">REPC</span>
+<!--<span id="title">Relation Extraction Path Cleaner</span>-->
 
-<button class="button-g">Test</button>
-<button class="button-g" id="export" >Export</button>
-<input class="input-g" type="file" id="fileInput">
-
-<select name="tree" id="tree">
+<span> Import tree from file: </span>
+<input class="input-g" type="file" id="import"> 
+<span> or choose from server: </span>
+<select class="button-g" name="tree" id="tree">
   <option value="resource/relations.json" selected>relations.json</option>
   <option value="resource/bio_links.json">bio_links.json</option>
   <option value="resource/flare.json">flare</option>
 </select>
+
+<button class="button-g" id="export" >Export Tree</button>
+<button class="button-g" id="test">Test</button>
+<button class="button-g" id="about">About</button>
 
 </div>
 

@@ -35,7 +35,7 @@
 
 if (window.File && window.FileReader && window.FileList && window.Blob) {
     window.onload = function() {
-        var fileInput = document.getElementById('fileInput');
+        var fileInput = document.getElementById('import');
 
         fileInput.addEventListener('change', function(e) {
             var file = fileInput.files[0];
@@ -65,8 +65,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 var bar = 70;
 var side = 250;
 var margin = {top: 20, right: 20, bottom: 30, left: 60};
-var width =  $( window ).width();
-var height =  $( window ).height() - bar - margin.top - margin.bottom;
+var width = $( window ).width();
+var height = $( window ).height() - bar - margin.top - margin.bottom;
     
 var i = 0,
     duration = 750,
@@ -117,7 +117,23 @@ var initTree = function(relations) {
       d.children = null;
     }
   }
+  
+  function setNodeSizes(d) {
+    if (d.children && d.children.length > 0) {
+      var size = 0;
+      for (var i in d.children) {
+        size += setNodeSizes(d.children[i]);
+      }
+      d.size = size;
+      return size;
+    }
+    else {
+      d.size = 0;
+      return 1;
+    }
+  }
 
+  tree_roots[0].size = setNodeSizes(tree_roots[0]);
   tree_roots[0].children.forEach(collapse);
   update(tree_roots[0]);
 }
@@ -383,7 +399,7 @@ function getAncestorPathLength(d) {
   return 1;
 }
 
-// Gat ancestor path
+// Get ancestor path
 function getAncestorPath(d) {
   if(d.parent) { return getAncestorPath(d.parent) + " ~ " + d.name; }
   return d.name;
