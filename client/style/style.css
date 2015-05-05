@@ -141,7 +141,7 @@ body {
 }
 
 .ui-selectmenu-button {
-    min-width: 160px;
+    min-width: 180px;
     max-width: 220px;
     font-family: 'Varela Round', 'Indie Flower', cursive;
     font-size:16px;
