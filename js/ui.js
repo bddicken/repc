@@ -8,7 +8,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 60};
 
 var getTreeWidth   = function() { return ($(window).width()/100)*68; }
 var getTreeHeight  = function() { return $(window).height() - margin.top - margin.bottom - 90; }
-var getPanelWidth  = function() { return ($(window).width()/100)*29; }
+var getPanelWidth  = function() { return ($(window).width()/100)*27; }
 var getPanelHeight = function() { return $(window).height() - margin.top - margin.bottom - 90; }
 
 var tree = d3.layout.tree()
@@ -31,7 +31,7 @@ var svg = d3.select("#word-tree")
 
 d3.select("#selectable")
       .style("width", (getPanelWidth() - 30) + "px") 
-      .style("height", (getPanelHeight() - 250) + "px");
+      .style("height", (getPanelHeight() - 270) + "px");
 
 d3.select("#scores")
       .style("width", (getPanelWidth() - 30) + "px")
@@ -67,19 +67,19 @@ var initTree = function(relations) {
   }
 
   // compute sizes for each node
+  // number of leaf nodes in subtree)
   function setNodeSizes(d) {
+    var size = 0;
     if (d.children && d.children.length > 0) {
-      var size = 0;
       for (var i in d.children) {
         size += setNodeSizes(d.children[i]);
       }
       d.size = size;
-      return size;
+    } else {
+      d.size = 1;
+      size = 1
     }
-    else {
-      d.size = 0;
-      return 1;
-    }
+    return size;
   }
 
   tree_roots[0].size = setNodeSizes(tree_roots[0]);
@@ -388,7 +388,7 @@ $(window).resize(function() {
     .style("height", getPanelHeight());
   d3.select("#selectable")
     .style("width", (getPanelWidth() - 30) + "px")
-    .style("height", (getPanelHeight() - 250) + "px");
+    .style("height", (getPanelHeight() - 270) + "px");
   d3.select("#scores")
     .style("width", (getPanelWidth() - 30) + "px")
     .style("height", 220 + "px")

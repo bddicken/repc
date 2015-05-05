@@ -171,12 +171,16 @@ body {
 
 #selectable { 
     list-style-type: none;
-    margin: 0;
-    padding: 0;
+    padding: 5px;
     height:300px;
     overflow-y:scroll;
     overflow-x:hidden;
-    display: inline-block;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+    border-style:solid;
+    border-radius:3px;
+    border-width:1px;
 }
 
 #selectable li { 
