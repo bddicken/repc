@@ -358,7 +358,7 @@ function getAncestorPathLength(d) {
 
 // Get ancestor path
 function getAncestorPath(d) {
-  if(d.parent) { return getAncestorPath(d.parent) + " ~ " + d.name; }
+  if(d.parent) { return getAncestorPath(d.parent) + " - " + d.name; }
   return d.name;
 }
 
