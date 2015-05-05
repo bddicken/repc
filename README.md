@@ -2,6 +2,8 @@
 
 See `about.html`.
 
+Can be see live [here](http://benjdd.com/projects/repc/index.html).
+
 # Authors
 
 Benjamin Dicken (bddicken@gmail.com)
