@@ -164,7 +164,7 @@ function update(source) {
   var labelScale = null;
   var labelScale = d3.scale.linear()
       .domain([0, tree_roots[tree_roots.length-1].size])
-      .range([12, 35]);
+      .range([12, 28]);
 
   // Update the nodes…
 
