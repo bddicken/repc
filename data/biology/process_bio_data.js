@@ -1,6 +1,9 @@
 //
 // parse bio YAML data in the resource/ dir.
 //
+// Pass in "generated_rules.yml" using the --yaml argument.
+// JSON output goes to stdout.
+//
 
 var program     = require('commander');
 var YAML        = require('yamljs');

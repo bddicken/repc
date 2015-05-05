@@ -2,7 +2,7 @@
 
 See `about.html`.
 
-Can be see live [here](http://benjdd.com/projects/repc/index.html).
+Can be seen live [here](http://benjdd.com/projects/repc/index.html).
 
 # Authors
 
