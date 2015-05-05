@@ -1,10 +1,12 @@
+
 $(function() {
-    
+
     $("#tree").selectmenu({
       change : function(e) {
         var tree_file = e.target.value;
         d3.json(tree_file, function (error, data) {
-            initTree(data);
+            allData = data;
+            initInterfaceWithData(data);
         });
       }
     });
@@ -16,5 +18,12 @@ $(function() {
     $("#export").button();
     
     $("#test").button();
+
+    $( "#selectable" ).selectable({
+        selected : function(event, ui) {
+            var key = $(ui.selected).html();
+            initTree(allData[key]);
+        }
+    });
     
 });

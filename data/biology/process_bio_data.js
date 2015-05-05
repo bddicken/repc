@@ -16,13 +16,8 @@ if (!program.yaml) {
  
 inputData = YAML.load(program.yaml);
 
-var root = {  
-    "name": "ROOT", 
-    "type": "unk", 
-    "size": 0,
-    "children": [],
-    "children_map": {}
-};
+
+var rels = {};
 
 var postprocessTree = function(tree_root) {
 
@@ -42,22 +37,33 @@ var postprocessTree = function(tree_root) {
     delete tree_root.children_map;
 }
 
-var addPathToTree = function(path, tree_root) {
-    if (path.length == 0) { return 1; }
+var addPathToTree = function(path, tree_root, level) {
     var key = path[0];
-    if ( !(key in tree_root.children_map) ) {
-        tree_root.children_map[key] = {
-            "name": key, 
-            "type": "unk", 
-            "size": 0,
-            "children": [],
-            "children_map": {}
-        };
+    
+    if (level == 0) {
+        if (!(key in rels)) {
+            rels[key] = {
+                "name": key, 
+                "type": "unk", 
+                "children": [],
+                "children_map": {}
+            };
+        }
+        path.shift();
+        addPathToTree(path, rels[key], level+1);
+    } else {
+        if (path.length == 0) { return 1; }
+        if ( !(key in tree_root.children_map) ) {
+            tree_root.children_map[key] = {
+                "name": key, 
+                "type": "unk", 
+                "children": [],
+                "children_map": {}
+            };
+        }
+        path.shift();
+        addPathToTree(path, tree_root.children_map[key], level+1);
     }
-    path.shift();
-    var size = addPathToTree(path, tree_root.children_map[key]);
-    tree_root.size += size;
-    return size;
 }
 
 var failCount = 0;
@@ -82,7 +88,7 @@ for (var i in inputData) {
         //console.log("  p = " + path.length);
         //console.log("=----");
 
-        addPathToTree(path, root);
+        addPathToTree(path, undefined, 0);
 
     } catch (e) {
         console.log(e);
@@ -90,9 +96,10 @@ for (var i in inputData) {
     }
 }
 
-postprocessTree(root);
+
+for (var i in rels) { postprocessTree(rels[i]); }
 
 if (failCount > 0) { console.log("Failed on " + failCount + " elements."); }
-console.log(JSON.stringify(root, undefined, 2));
+console.log(JSON.stringify(rels, undefined, 2));
 
 

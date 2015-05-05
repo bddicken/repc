@@ -1,79 +1,18 @@
-/**
- * Save js object to JSON file.
- */
 
-(function(console){
+var i = 0;
+var duration = 750;
+var tree_roots;
+var allData = {};
 
-    console.save = function(data, filename){
-
-        if(!data) {
-            console.error('Console.save: No data')
-            return;
-        }
-
-        if(!filename) filename = 'console.json'
-
-        if(typeof data === "object"){
-            data = JSON.stringify(data, undefined, 1);
-        }
-
-        var blob = new Blob([data], {type: 'text/json'}),
-        e    = document.createEvent('MouseEvents'),
-        a    = document.createElement('a')
-
-        a.download = filename
-        a.href = window.URL.createObjectURL(blob)
-        a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
-        e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-        a.dispatchEvent(e)
-    }
-})(console);
-
-/**
- * Load json file.
- */
-
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-    window.onload = function() {
-        var fileInput = document.getElementById('import');
-
-        fileInput.addEventListener('change', function(e) {
-            var file = fileInput.files[0];
-            var textType = /text.*/;
-            //console.log(file.type);
-
-            if (file.type.match(textType) || file.type == "") {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    var tree = JSON.parse(reader.result);
-                    cleanAfterSave(tree);
-                    initTree(tree);
-                    initTree(tree);
-                }
-
-                reader.readAsText(file);    
-            } else {
-                alert("File not supported!");
-            }
-        });
-    }
-} else {
-    alert('The File APIs are not fully supported in this browser.');
-}
-
-var bar = 70;
-var side = 250;
 var margin = {top: 20, right: 20, bottom: 30, left: 60};
-var width = $( window ).width();
-var height = $( window ).height() - bar - margin.top - margin.bottom;
-    
-var i = 0,
-    duration = 750,
-    tree_roots;
+
+var getTreeWidth   = function() { return ($(window).width()/100)*68; }
+var getTreeHeight  = function() { return $(window).height() - margin.top - margin.bottom - 90; }
+var getPanelWidth  = function() { return ($(window).width()/100)*29; }
+var getPanelHeight = function() { return $(window).height() - margin.top - margin.bottom - 90; }
 
 var tree = d3.layout.tree()
-    .size([height, width]);
+    .size([getTreeHeight() - 30, getTreeWidth()]);
 
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
@@ -85,19 +24,27 @@ var svg = d3.select("#word-tree")
       .style("display", "inline-block")
     .append("svg")
       .attr("id", "tree-vis")
-      .attr("width", $( window ).width() - side)
-      .attr("height", $( window ).height() - 90)
+      .attr("width", getTreeWidth() + "px")
+      .attr("height",getTreeHeight() + "px")
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+d3.select("#selectable")
+      .style("width", (getPanelWidth() - 30) + "px") 
+      .style("height", (getPanelHeight() - 250) + "px");
+
+d3.select("#scores")
+      .style("width", (getPanelWidth() - 30) + "px")
+      .style("height", 220 + "px")
+
 var sidebar = d3.select("#side-bar")
-      .style("width", (side-45) + "px")
-      .style("height", ($( window ).height() - 90) + "px")
+      .style("width", getPanelWidth() + "px")
+      .style("height", getPanelHeight())
       .style("border-style", "solid")
       .style("border-color", "DarkSlateBlue")
       .style("border-width", "3px")
       .style("border-width", "2px")
-      .style("display", "inline-block");
+      .style("display", "block");
 
 var initTree = function(relations) {
   
@@ -107,9 +54,10 @@ var initTree = function(relations) {
 
   tree_roots = [];
   tree_roots.push(relations);
-  tree_roots[0].x0 = height / 2;
+  tree_roots[0].x0 = getTreeHeight() / 2;
   tree_roots[0].y0 = 0;
 
+  // collapse nodes
   function collapse(d) {
     if (d.children) {
       d._children = d.children;
@@ -117,7 +65,8 @@ var initTree = function(relations) {
       d.children = null;
     }
   }
-  
+
+  // compute sizes for each node
   function setNodeSizes(d) {
     if (d.children && d.children.length > 0) {
       var size = 0;
@@ -138,14 +87,24 @@ var initTree = function(relations) {
   update(tree_roots[0]);
 }
 
-d3.json("./resource/relations.json", function(error, relations) {
-  initTree(relations);
-});
+var processDataPreSave = function(data) {
+    for (var i in data) { 
+        cleanBeforeSave(data[i]);
+    }
+}
 
-d3.select("#export").on("click", function() { 
-    cleanBeforeSave(tree_roots[tree_roots.length-1]);
-    console.save(tree_roots[tree_roots.length-1], "rel.json"); 
-    cleanAfterSave(tree_roots[tree_roots.length-1]);
+var processDataPostSave = function(data) {
+    for (var i in data) { 
+        cleanAfterSave(data[i]);
+    }
+}
+
+d3.select("#export").on("click", function() {
+    
+    processDataPreSave(allData);
+    console.save(allData, "rel.json"); 
+    processDataPostSave(allData);
+    
     update(tree_roots[tree_roots.length-1]);
 });
 
@@ -192,12 +151,8 @@ d3.select(self.frameElement).style("height", "800px");
 function update(source) {
     
     d3.select("#tree-vis")
-      .attr("width", $( window ).width() - side)
-      .attr("height", $( window ).height() - 90)
-  
-  var labelScale = d3.scale.linear()
-      .domain([0, tree_roots[tree_roots.length-1].size])
-      .range([12, 50]);
+      .attr("width", getTreeWidth() + "px")
+      .attr("height", getTreeHeight() + "px")
 
   // Compute the new tree layout.
   var nodes = tree.nodes(tree_roots[tree_roots.length-1]).reverse(),
@@ -205,6 +160,11 @@ function update(source) {
 
   // Normalize for fixed-depth.
   nodes.forEach(function(d) { d.y = d.depth * 280; });
+  
+  var labelScale = null;
+  var labelScale = d3.scale.linear()
+      .domain([0, tree_roots[tree_roots.length-1].size])
+      .range([12, 35]);
 
   // Update the nodes…
 
@@ -240,48 +200,45 @@ function update(source) {
       .on("click", click)
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-  
+ 
+  var initTypeButton = function(selection) {
+      selection
+          .attr("width", 18)
+          .attr("height", 18)
+          .style("opacity", 0.7)
+          .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
+          .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); });
+  }
+
   nodeEnter.append("rect")
       .attr("class", "green")
       .style("fill", "LightGreen")
-      .attr("width", 18)
-      .attr("height", 18)
       .attr("x", 15)
       .attr("y", -9)
-      .style("opacity", 0.7)
-      .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
-      .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { console.log("pos"); updateTree(d,"pos"); })
+      .on("click", function(d) { updateTree(d,"pos"); })
+      .call(initTypeButton);
 
   nodeEnter.append("rect")
       .attr("class", "yellow")
       .style("fill", "Khaki")
-      .attr("width", 18)
-      .attr("height", 18)
       .attr("x", 33)
       .attr("y", -9)
-      .style("opacity", 0.7)
-      .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
-      .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { console.log("unk"); updateTree(d,"unk"); })
+      .on("click", function(d) { updateTree(d,"unk"); })
+      .call(initTypeButton);
 
   nodeEnter.append("rect")
       .attr("class", "red")
       .style("fill", "LightCoral")
-      .attr("width", 18)
-      .attr("height", 18)
       .attr("x", 51)
       .attr("y", -9)
-      .style("opacity", 0.7)
-      .on("mouseover", function(d) { d3.select(this).style("opacity", 1.0); })
-      .on("mouseout", function(d) { d3.select(this).style("opacity", 0.7); })
-      .on("click", function(d) { console.log("neg"); updateTree(d,"neg"); })
+      .on("click", function(d) { updateTree(d,"neg"); })
+      .call(initTypeButton);
 
   nodeEnter.append("text")
+      .attr("class", "node-label")
       .attr("x", function(d) { return 75; })
       .attr("dy", ".35em")
       .attr("font-size", function(d) { 
-        //return Math.ceil(Math.log(d.size+1))*15 + "px"; 
         return labelScale(d.size) + "px";
       })
       .attr("text-anchor", function(d) { return "start"; })
@@ -309,15 +266,16 @@ function update(source) {
             else if (d.type == "neg") { return "LightCoral"; }
             else                      { return "Khaki"; }
       })
-
-  nodeUpdate.select("text")
-      .attr("font", function(d) { 
-          if ('size' in d) {
-              return Math.ceil(Math.log(d.size+1))*15 + "px";
-          }
-          return 12 + "px"; 
+  
+  nodeUpdate.select(".node-label")
+      .style("text-align", "middle")
+      .attr("x", 75)
+      .attr("text-anchor", "start")
+      .attr("font-size", function(d) { 
+        return labelScale(d.size) + "px";
       })
-      .style("fill-opacity", 1);
+      .style("fill-opacity", 1)
+      .attr("dy", ".30em");
 
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
@@ -365,7 +323,6 @@ function update(source) {
   });
 }
 
-//
 function rootUpdate(d) {
   var top_root = tree_roots[tree_roots.length-1];
   if (d == top_root) {
@@ -417,15 +374,50 @@ function updateTree(d, type) {
   update(d);
 }
 
-$( window ).resize(function() {
-  width = $( window ).width() - side;
-  height = $( window ).height() - bar - margin.top - margin.bottom;
-  tree.size([height, width]);
-  d3.select("#tree-vis")
-    .attr("width", width )
-    .attr("height", height );
-  d3.select("#side-bar")
-    .style("height", function(d) { return ($( window ).height() - 90) + "px"; });
+function updateCurentTree() {
   update(tree_roots[tree_roots.length-1]);
+}
+
+$(window).resize(function() {
+  tree.size([getTreeHeight() - 30, getTreeWidth()]);
+  d3.select("#tree-vis")
+    .attr("width", getTreeWidth() + "px")
+    .attr("height", getTreeHeight());
+  d3.select("#side-bar")
+    .style("width", getPanelWidth() + "px")
+    .style("height", getPanelHeight());
+  d3.select("#selectable")
+    .style("width", (getPanelWidth() - 30) + "px")
+    .style("height", (getPanelHeight() - 250) + "px");
+  d3.select("#scores")
+    .style("width", (getPanelWidth() - 30) + "px")
+    .style("height", 220 + "px")
+  update(tree_roots[tree_roots.length-1]);
+});
+
+var initInterfaceWithData = function(data) {
+    var relation_types = Object.keys(data);
+
+    if (relation_types.length < 1) { 
+        alert("no relationships found in input file");
+        return;
+    }
+
+    // Setup the list of relationships
+    d3.select("#selectable").html("");
+    d3.select("#selectable")
+        .selectAll("selectable-items")
+        .data(relation_types).enter()
+        .append("li")
+        .attr("value", function(d) { return d; })
+        .attr("class", "ui-widget-content")
+        .html(function(d) { return d; });
+    
+    initTree(data[relation_types[0]]);
+}
+
+d3.json("./resource/bio_links.json", function(error, data) {
+    allData = data;
+    initInterfaceWithData(data);
 });
 

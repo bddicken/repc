@@ -1,0 +1,148 @@
+{ 
+"REL1" : {
+ "name": "PER", "type": "pos",
+ "children": 
+ [
+  {
+   "name": "works", "type": "unk",
+   "children": 
+   [
+    {
+     "name": "for", "type": "pos",
+     "children": [
+      {"name": "company", "type": "pos"},
+      {"name": "school", "type": "pos"}
+     ]
+    },
+    {
+     "name": "at", "type": "pos",
+     "children": [
+      {"name": "company", "type": "unk"},
+      {"name": "school", "type": "pos"},
+      {"name": "hotel", "type": "pos"}
+     ]
+    }
+   ]
+  },
+  {
+   "name": "travels", "type": "pos",
+   "children": 
+   [
+    {
+     "name": "for", "type": "neg",
+     "children": [
+      {"name": "company", "type": "neg"},
+      {"name": "school", "type": "pos"}
+     ]
+    },
+    {
+     "name": "at", "type": "neg",
+     "children": [
+      {"name": "company", "type": "neg"},
+      {"name": "school", "type": "pos"},
+      {"name": "corp", "type": "pos"},
+      {"name": "co", "type": "pos"},
+      {"name": "center", "type": "pos"},
+      {"name": "centre", "type": "pos"},
+      {"name": "place", "type": "pos"},
+      {"name": "building", "type": "pos"},
+      {"name": "shoppe", "type": "pos"}
+     ]
+    }
+   ]
+  }
+ ]
+},
+"REL2" : {
+ "name": "PER", "type": "pos",
+ "children": 
+ [
+  {
+   "name": "works", "type": "unk",
+   "children": 
+   [
+    {
+     "name": "for", "type": "pos",
+     "children": [
+      {"name": "company", "type": "pos"},
+      {"name": "school", "type": "pos"}
+     ]
+    },
+    {
+     "name": "at", "type": "pos",
+     "children": [
+      {"name": "company", "type": "unk"},
+      {"name": "school", "type": "pos"},
+      {"name": "hotel", "type": "pos"}
+     ]
+    }
+   ]
+  }
+ ]
+},
+"REL3" : {
+ "name": "PER", "type": "pos",
+ "children": 
+ [
+  {
+   "name": "works", "type": "unk",
+   "children": 
+   [
+    {
+     "name": "for", "type": "pos",
+     "children": [
+      {"name": "company", "type": "pos"},
+      {"name": "school", "type": "pos"}
+     ]
+    },
+    {
+     "name": "at", "type": "pos",
+     "children": [
+      {"name": "company", "type": "unk"},
+      {"name": "school", "type": "pos"},
+      {"name": "hotel", "type": "pos"}
+     ]
+    }
+   ]
+  }
+ ]
+},
+"REL4" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL5" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL6" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL7" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL8" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL9" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL10" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL11" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+},
+"REL12" : {
+ "name": "PER", "type": "pos",
+ "children": [] 
+}
+
+}
+

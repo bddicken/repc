@@ -24,15 +24,15 @@
 <div id="title-bar">
 
 <span id="title">REPC</span>
-<!--<span id="title">Relation Extraction Path Cleaner</span>-->
 
 <span> Import tree from file: </span>
 <input class="input-g" type="file" id="import"> 
+
 <span> or choose from server: </span>
 <select class="button-g" name="tree" id="tree">
-  <option value="resource/relations.json" selected>relations.json</option>
-  <option value="resource/bio_links.json">bio_links.json</option>
-  <option value="resource/flare.json">flare</option>
+  <option value="resource/test_per_emp.json">test_per_emp.json</option>
+  <option value="resource/bio_links.json" selected>bio_links.json</option>
+  <option value="resource/flare.json">flare.json</option>
 </select>
 
 <button class="button-g" id="export" >Export Tree</button>
@@ -41,10 +41,13 @@
 
 </div>
 
-<div id="word-tree"></div>
+<div>
 
-<div id="side-bar">
-  <span  class="table-title"style="display:table">Baseline Scores:</span>
+<div class="float-me" id="word-tree"></div>
+
+<div class="float-me" id="side-bar">
+ <div id="scores">
+  <span class="table-title"style="display:table">Baseline Scores:</span>
   <table>
    <tr>
      <td>Precision =</td>
@@ -75,10 +78,21 @@
      <td>0.0</td>
    </tr>
   </table>
+ </div>
+
+</br>
+
+<ol id="selectable">
+    <!-- populated dynamically -->
+</ol>
+
+</div>
+
 </div>
 
 <script src="./js/ui.js"></script>
 <script src="./js/ui_interactions.js"></script>
+<script src="./js/io.js"></script>
 
 </body>
 </html>

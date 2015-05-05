@@ -14,29 +14,37 @@
 
 <h2>Background</h2>
 <p>
-Fusce nec leo magna. Nulla facilisi. In at vestibulum mauris. 
-Aenean eget nulla nibh. Fusce eu orci in eros luctus fringilla 
-ac vel turpis. Suspendisse sed dui commodo, interdum arcu id, 
-porta quam. Quisque sed augue turpis. Cum sociis natoque penatibus 
-et magnis dis parturient montes, nascetur ridiculus mus.
+Relationship extraction systems which use dependency path are a very important part of modern NLP.
+However, there are very few tools visualizing, exploring, and manually tuning the traning data used in these system.
+REPC (Relation Extraction Path Cleaner) hopes to change that by prividing an intuitive and easy-to-use front-end
+for doing so.
+
+As an example, let's look at a relation extraction system that recently came out caled ICE. 
+ICE is a very powerful system for automatically identifying and extracting relation information from arbitrari corpi. 
+It is a very powerful and useful tool. 
+One of the steps in ICE's pipeline is a process of manual tuning of the dependency paths which it uses to identify the relationships. This is the interface for doing so:
+
+<img src="img/ice_demo.png" alt="ICE demo" width="600px" style="display:block; margin:16px;">
+
+In order to label all paths extracted by the sstem, the user must inspect each path one-at-a-time - a very tedious process. 
+Although ICE is good aat many things, this step is rather painful, and can be greatly improved upon.
+
 </p>
 
-<h2>Implementation</h2>
+<h2>About REPC</h2>
 <p>
-Fusce nec leo magna. Nulla facilisi. In at vestibulum mauris. 
-Aenean eget nulla nibh. Fusce eu orci in eros luctus fringilla 
-ac vel turpis. Suspendisse sed dui commodo, interdum arcu id, 
-porta quam. Quisque sed augue turpis. Cum sociis natoque penatibus 
-et magnis dis parturient montes, nascetur ridiculus mus.
+REPC attempts to make manual path cleansing a faster, more accurate, and more enjoyable process.
+
+REPC represents all of the rules for determining a relationship with a prefix tree. 
+Once the prefix tree is loaded, the user can traverse the tree by expanding + collapsing nodes, and re-rooting the tree.
+Any node can be marked as positive (green), negative (bad), or yellow (unknown). 
+If a non-leaf node is marked, all of its ancestor nodes will be marked as well.
 </p>
 
 <h2>Contributors</h2>
 <p>
-Fusce nec leo magna. Nulla facilisi. In at vestibulum mauris. 
-Aenean eget nulla nibh. Fusce eu orci in eros luctus fringilla 
-ac vel turpis. Suspendisse sed dui commodo, interdum arcu id, 
-porta quam. Quisque sed augue turpis. Cum sociis natoque penatibus 
-et magnis dis parturient montes, nascetur ridiculus mus.
+Dr. Mihai Surdeanu had the initial inspiration, and privided much guidance during development.
+Benjamin Dicken was the primary developer for the web application.
 </p>
 
 </body>
