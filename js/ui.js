@@ -409,6 +409,7 @@ var initInterfaceWithData = function(data) {
         .selectAll("selectable-items")
         .data(relation_types).enter()
         .append("li")
+        .style("cursor", "pointer")
         .attr("value", function(d) { return d; })
         .attr("class", "ui-widget-content")
         .html(function(d) { return d; });

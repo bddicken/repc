@@ -1,6 +1,6 @@
 # REPC - Relation Extraction Path Cleaner
 
-TODO
+See `about.html`.
 
 # Authors
 
